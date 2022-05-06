@@ -3,6 +3,7 @@ import {
   FC,
   HTMLAttributes,
   MouseEventHandler,
+  useEffect,
   useRef,
   useState,
 } from 'react';
@@ -28,6 +29,7 @@ export const CameraInteractionLayout: FC<
 > = ({ ...attrs }) => {
   const mediaDeviceStream = useRef<MediaStream>();
   const [isButtonDisabled, setButtonDisableState] = useState(false);
+  const [isVideoButtonVisible, setVideoButtonVisibility] = useState(true);
 
   const className = `${attrs.className || ''} ${
     styles.cameraInteractionLayout
@@ -40,6 +42,13 @@ export const CameraInteractionLayout: FC<
 
     if (mediaStreamError !== undefined || mediaStream === undefined) {
       console.log('mediaStreamError:', mediaStreamError);
+
+      setVideoButtonVisibility(false);
+
+      setTimeout(() => {
+        setButtonDisableState(false);
+        setVideoButtonVisibility(true);
+      }, 500);
 
       return;
     }
@@ -59,7 +68,7 @@ export const CameraInteractionLayout: FC<
       });
     }
 
-    // well... this is sucks... TODO: fix later (of not)
+    // well... this is sucks... TODO: fix later (or not)
     setTimeout(() => {
       setButtonDisableState(false);
     }, 2500);
@@ -74,13 +83,16 @@ export const CameraInteractionLayout: FC<
         <div className={styles.interactionSection__bpm}>{bpmValue} bpm</div>
 
         <div>
-          {`${isButtonDisabled}`}
-          <VideoButton
-            className={styles.interactionSection__button}
-            onStart={onStart}
-            onStop={onStop}
-            disabled={isButtonDisabled}
-          />
+          {isVideoButtonVisible === true ? (
+            <VideoButton
+              className={styles.interactionSection__button}
+              onStart={onStart}
+              onStop={onStop}
+              disabled={isButtonDisabled}
+            />
+          ) : (
+            'Нужен досуп к камере!'
+          )}
         </div>
       </div>
     </div>
