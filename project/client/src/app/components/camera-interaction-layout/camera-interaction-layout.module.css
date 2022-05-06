@@ -1,0 +1,34 @@
+.cameraInteractionLayout {
+  min-height: 100vh;
+  background-color: whitesmoke;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.interactionSection {
+  /* display: flex;
+  flex-direction: column; */
+}
+
+.interactionSection > * + * {
+  margin-top: 0.8em;
+}
+
+.interactionSection__bpm {
+  text-align: center;
+}
+
+.interactionSection__button {
+  /* font-weight: 500;
+  font-size: 1.2rem;
+  padding: 0.6em 1.2em;
+  min-width: min(180px, 100%);
+  cursor: pointer;
+  font-style: normal;
+  margin: 0 auto;
+  display: block; */
+
+  margin: 0 auto;
+  display: block;
+}
