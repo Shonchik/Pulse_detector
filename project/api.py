@@ -15,6 +15,7 @@ import sys
 import asyncio
 import websockets
 import base64
+import cv2
 
 app = Flask(__name__)
 api = Api(app)
@@ -51,19 +52,32 @@ class Session(Resource):
         return id, 200
 
 class NewData(Resource):
-    def get(self, id=-1, frame = ""):
+    # def get(self, id=-1, frame = ""):
+    #     if id == -1:
+    #         return "Not found", 404
+    #     sessions[id].data.append(frame)
+    #     sessions[id].run_if_nedeed()
+    #     return "All good", 200
+
+    def post(self, id=-1):
+        if id == -1:
+            return "Not found", 404
+        json_data = request.get_json(force=True)
+        frame = json_data['frame']
         sessions[id].data.append(frame)
         sessions[id].run_if_nedeed()
         return "All good", 200
 
 class BPM(Resource):
-    def get(self, id=0):
+    def get(self, id=-1):
+        if id == -1:
+            return "Not found", 404
         app = sessions[id]
         print(app.get_bpm())
         return app.get_bpm(), 200
 
 api.add_resource(Session, "/new_session")
-api.add_resource(NewData, "/new_data/<int:id>/<string:frame>")
+api.add_resource(NewData, "/new_data/<int:id>")
 api.add_resource(BPM, "/get_bpm/<int:id>")
 
 if __name__ == '__main__':
