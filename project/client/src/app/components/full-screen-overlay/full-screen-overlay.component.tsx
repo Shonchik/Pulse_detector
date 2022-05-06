@@ -17,7 +17,7 @@ export const FullScreenOverlay: FC<FullScreenOverlayAttrsAndProps> = ({
   children,
   ...attrs
 }) => {
-  const className = `${attrs.className} ${styles.fullScreenOverlay}`;
+  const className = `${attrs.className || ''} ${styles.fullScreenOverlay}`;
 
   return (
     <div {...attrs} className={className}>

@@ -2,6 +2,7 @@ import '../styles/main.css';
 import { FC } from 'react';
 import styles from './app.module.css';
 import { FullScreenOverlay } from './components/full-screen-overlay/full-screen-overlay.component';
+import { CameraInteractionLayout } from './components/camera-interaction-layout/camera-interaction-layout.component';
 
 export const App: FC = () => {
   return (
@@ -11,7 +12,7 @@ export const App: FC = () => {
           Приложение не поддерживает &quot;mediaDevices&quot; API.
         </FullScreenOverlay>
       ) : (
-        <div>Kek</div>
+        <CameraInteractionLayout />
       )}
     </div>
   );
