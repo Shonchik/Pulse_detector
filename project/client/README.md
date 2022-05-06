@@ -8,7 +8,7 @@
 
 ### `yarn start`
 
-Эт значиц запускаем проект у себя локально [http://localhost:3000](http://localhost:7351)
+Эт значиц запускаем проект у себя локально [http://localhost:7351](http://localhost:7351)
 
 ### `yarn test`
 
