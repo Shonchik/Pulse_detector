@@ -24,10 +24,17 @@ class getPulseApp():
 
     def __init__(self):
         self.processor = findFaceGetPulse(bpm_limits=[50, 160], data_spike_limit=2500., face_detector_smoothness=10.)
+        self.data = []
 
-    def run(self, frame):
-        self.processor.frame_in = frame
-        self.processor.run(1)
+    def run(self):
+        while len(self.data) != 0:
+            self.processor.frame_in = self.data[0]
+            # print(self.data[0])
+            self.data.pop(0)
+            self.processor.run(1)
+
+    def run_if_nedeed(self):
+        self.run()
 
     def get_bpm(self):
         return str(self.processor.bpm)
@@ -43,8 +50,8 @@ class Session(Resource):
 
 class NewData(Resource):
     def get(self, id=-1, frame = ""):
-        app = sessions[id]
-        app.run(frame)
+        sessions[id].data.append(frame)
+        sessions[id].run_if_nedeed()
         return "All good", 200
 
 class BPM(Resource):
