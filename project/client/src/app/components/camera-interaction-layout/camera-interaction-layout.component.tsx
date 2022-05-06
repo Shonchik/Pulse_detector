@@ -3,7 +3,6 @@ import {
   FC,
   HTMLAttributes,
   MouseEventHandler,
-  useEffect,
   useRef,
   useState,
 } from 'react';
