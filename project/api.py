@@ -14,6 +14,7 @@ import socket
 import sys
 import asyncio
 import websockets
+import base64
 
 app = Flask(__name__)
 api = Api(app)
@@ -28,7 +29,10 @@ class getPulseApp():
 
     def run(self):
         while len(self.data) != 0:
-            self.processor.frame_in = self.data[0]
+            im_bytes = base64.b64decode(self.data[0])
+            im_arr = np.frombuffer(im_bytes, dtype=np.uint8)
+            frame = cv2.imdecode(im_arr, flags=cv2.IMREAD_COLOR)
+            self.processor.frame_in = frame
             # print(self.data[0])
             self.data.pop(0)
             self.processor.run(1)
