@@ -16,7 +16,7 @@ export const newSession = async () => {
 
 export const getBpm = async (sessionId: number) => {
   const bpm = await createFetch(`get_bpm/${sessionId}`);
-  console.log('bpm = ');
+  console.log('bpm = ', bpm);
   return bpm;
 };
 

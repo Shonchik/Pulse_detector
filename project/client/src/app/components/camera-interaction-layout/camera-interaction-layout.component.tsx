@@ -34,12 +34,17 @@ export const CameraInteractionLayout: FC<
   const [isButtonDisabled, setButtonDisableState] = useState(false);
   const [isVideoButtonVisible, setVideoButtonVisibility] = useState(true);
   const [bpmValue, setBmpValue] = useState(0);
+  const [sessionId, setSessionId] = useState<number>(-1);
 
   useEffect(() => {
-    const createSession = async () => {
-      await newSession();
-    };
-    createSession();
+    if (sessionId === -1) {
+      const createSession = async () => {
+        const id = await newSession();
+        console.log(id);
+        setSessionId(id);
+      };
+      createSession();
+    }
   }, []);
 
   const className = `${attrs.className || ''} ${
@@ -86,16 +91,21 @@ export const CameraInteractionLayout: FC<
   };
 
   useEffect(() => {
-    setInterval(async () => {
-      const bpm = await getBpm(0);
-      setBmpValue(bpm);
-    }, BPM_REFRESH_DELAY);
-  }, []);
+    if (sessionId !== -1) {
+      setInterval(async () => {
+        const bpm = await getBpm(sessionId);
+        setBmpValue(bpm);
+      }, BPM_REFRESH_DELAY);
+    }
+  }, [sessionId]);
 
   return (
     <div {...attrs} className={className}>
       <div className={styles.interactionSection}>
-        <VideoPreview srcObject={mediaDeviceStream.current} />
+        <VideoPreview
+          srcObject={mediaDeviceStream.current}
+          sessionId={sessionId}
+        />
 
         <div className={styles.interactionSection__bpm}>{bpmValue} bpm</div>
 

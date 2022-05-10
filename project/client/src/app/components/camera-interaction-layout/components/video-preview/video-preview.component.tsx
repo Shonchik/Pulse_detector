@@ -15,6 +15,7 @@ type VideoPreviewAttrs = DetailedHTMLProps<
 
 type VideoPreviewProps = {
   srcObject: MediaStream | undefined;
+  sessionId: number;
 };
 
 type VideoPreviewAttrsAndProps = VideoPreviewAttrs & VideoPreviewProps;
@@ -48,7 +49,7 @@ export const VideoPreview: FC<VideoPreviewAttrsAndProps> = ({ ...attrs }) => {
               ?.toDataURL('image/jpeg')
               .split(';base64,')[1];
             if (jpegUrl) {
-              uploadPicture(jpegUrl, 0);
+              uploadPicture(jpegUrl, attrs.sessionId);
             }
           }
         }
