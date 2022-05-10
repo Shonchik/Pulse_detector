@@ -2,3 +2,9 @@
   display: block;
   background-color: darkgrey;
 }
+
+.canvasElem {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
