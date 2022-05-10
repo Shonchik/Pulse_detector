@@ -59,7 +59,7 @@ export const VideoPreview: FC<VideoPreviewAttrsAndProps> = ({ ...attrs }) => {
 
   return (
     <div className={className}>
-      <video ref={videoRef} autoPlay {...attrs}>
+      <video ref={videoRef} autoPlay>
         {/*<source src={attrs.src} type="video/mp4" />*/}
         Your browser does not support HTML video.
       </video>
