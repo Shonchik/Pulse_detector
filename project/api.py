@@ -27,12 +27,13 @@ class getPulseApp():
     def __init__(self):
         self.processor = findFaceGetPulse(bpm_limits=[50, 160], data_spike_limit=2500., face_detector_smoothness=10.)
         self.data = []
+        self.count = 0
 
     def run(self):
         while len(self.data) != 0:
             im_bytes = base64.b64decode(self.data[0])
             im_arr = np.frombuffer(im_bytes, dtype=np.uint8)
-            frame = cv2.imdecode(im_arr, flags=cv2.IMREAD_COLOR)
+            frame = cv2.imdecode(im_arr, 1)
             self.processor.frame_in = frame
             # print(self.data[0])
             self.data.pop(0)
@@ -40,6 +41,9 @@ class getPulseApp():
 
     def run_if_nedeed(self):
         self.run()
+        if self.count > 10 and self.processor.find_faces :
+            self.processor.find_faces_toggle()
+            return
 
     def get_bpm(self):
         return str(self.processor.bpm)
@@ -52,19 +56,13 @@ class Session(Resource):
         return id, 200
 
 class NewData(Resource):
-    # def get(self, id=-1, frame = ""):
-    #     if id == -1:
-    #         return "Not found", 404
-    #     sessions[id].data.append(frame)
-    #     sessions[id].run_if_nedeed()
-    #     return "All good", 200
-
     def post(self, id=-1):
         if id == -1:
             return "Not found", 404
         json_data = request.get_json(force=True)
         frame = json_data['frame']
         sessions[id].data.append(frame)
+        sessions[id].count = sessions[id].count + 1
         sessions[id].run_if_nedeed()
         return "All good", 200
 
@@ -73,7 +71,7 @@ class BPM(Resource):
         if id == -1:
             return "Not found", 404
         app = sessions[id]
-        print(app.get_bpm())
+        # print(app.get_bpm())
         return app.get_bpm(), 200
 
 api.add_resource(Session, "/new_session")
