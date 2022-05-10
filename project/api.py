@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, jsonify, request
 from flask_restful import Api, Resource, reqparse
 from flask_socketio import SocketIO, emit
 from lib.device import Camera
@@ -81,7 +81,7 @@ api.add_resource(NewData, "/new_data/<int:id>")
 api.add_resource(BPM, "/get_bpm/<int:id>")
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', debug=True)
 
 
 
