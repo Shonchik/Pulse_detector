@@ -174,6 +174,7 @@ class findFaceGetPulse(object):
         vals = self.get_subface_means(forehead1)
 
         self.data_buffer.append(vals)
+
         L = len(self.data_buffer)
         if L > self.buffer_size:
             self.data_buffer = self.data_buffer[-self.buffer_size:]
@@ -212,6 +213,7 @@ class findFaceGetPulse(object):
             beta = 1 - t
 
             self.bpm = self.freqs[idx2]
+
             self.idx += 1
 
             x, y, w, h = self.get_subface_coord(0.5, 0.18, 0.25, 0.15)
