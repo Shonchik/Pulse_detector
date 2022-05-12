@@ -50,6 +50,7 @@ class findFaceGetPulse(object):
 
         self.idx = 1
         self.find_faces = True
+        self.text_output = "0 bpm"
 
     def find_faces_toggle(self):
         self.find_faces = not self.find_faces
@@ -139,6 +140,7 @@ class findFaceGetPulse(object):
                                                                    50, 50),
                                                                flags=cv2.CASCADE_SCALE_IMAGE))
 
+            # print(detected)
             if len(detected) > 0:
                 detected.sort(key=lambda a: a[-1] * a[-2])
 
@@ -235,6 +237,7 @@ class findFaceGetPulse(object):
                 text = "(estimate: %0.1f bpm, wait %0.0f s)" % (self.bpm, gap)
             else:
                 text = "(estimate: %0.1f bpm)" % (self.bpm)
+            self.text_output = text
             tsize = 1
             cv2.putText(self.frame_out, text,
                        (int(x - w / 2), int(y)), cv2.FONT_HERSHEY_PLAIN, tsize, col)
