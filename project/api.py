@@ -46,7 +46,7 @@ class getPulseApp():
             return
 
     def get_bpm(self):
-        return str(self.processor.bpm)
+        return str(self.processor.text_output)
 
 class Session(Resource):
     def get(self):
