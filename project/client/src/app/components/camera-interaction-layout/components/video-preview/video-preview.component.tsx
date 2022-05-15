@@ -3,6 +3,7 @@ import {
   FC,
   useEffect,
   useRef,
+  useState,
   VideoHTMLAttributes,
 } from 'react';
 import styles from './video-preview.module.css';
@@ -14,6 +15,7 @@ type VideoPreviewAttrs = DetailedHTMLProps<
 >;
 
 type VideoPreviewProps = {
+  frameUploadEnabled: boolean;
   srcObject: MediaStream | undefined;
   sessionId: number;
 };
@@ -26,6 +28,7 @@ export const VideoPreview: FC<VideoPreviewAttrsAndProps> = ({ ...attrs }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const className = `${attrs.className || ''} ${styles.videoPreview}`;
+  const [timerId, setTimerId] = useState<NodeJS.Timer>();
 
   useEffect(() => {
     if (attrs.srcObject && videoRef.current) {
@@ -37,8 +40,8 @@ export const VideoPreview: FC<VideoPreviewAttrsAndProps> = ({ ...attrs }) => {
   }, [attrs.srcObject]);
 
   useEffect(() => {
-    if (attrs.srcObject) {
-      setInterval(() => {
+    if (attrs.srcObject && attrs.frameUploadEnabled) {
+      const id = setInterval(() => {
         if (videoRef.current && canvasRef.current) {
           canvasRef.current.width = videoRef.current.videoWidth;
           canvasRef.current.height = videoRef.current.videoHeight;
@@ -54,8 +57,18 @@ export const VideoPreview: FC<VideoPreviewAttrsAndProps> = ({ ...attrs }) => {
           }
         }
       }, DELAY_BETWEEN_FRAMES);
+      setTimerId(id);
     }
-  }, [attrs.srcObject]);
+  }, [attrs.srcObject, attrs.frameUploadEnabled]);
+
+  useEffect(() => {
+    if (!attrs.frameUploadEnabled && timerId) {
+      console.log('disabling upload...');
+      clearTimeout(timerId);
+      setTimerId(undefined);
+      console.log('upload disabled!');
+    }
+  }, [attrs.frameUploadEnabled]);
 
   return (
     <div className={className}>

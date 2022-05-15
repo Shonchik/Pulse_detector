@@ -14,6 +14,11 @@ export const newSession = async () => {
   return sessionId;
 };
 
+export const stopSession = async (sessionId: number) => {
+  await createFetch(`close_session/${sessionId}`);
+  console.log(`Closing session ${sessionId}`);
+};
+
 export const getBpm = async (sessionId: number) => {
   const bpm = await createFetch(`get_bpm/${sessionId}`);
   console.log('bpm = ', bpm);

@@ -11,7 +11,7 @@ import styles from './camera-interaction-layout.module.css';
 import { VideoPreview } from './components/video-preview/video-preview.component';
 import { VideoButton } from './components/video-button/video-button.component';
 import { getUserMedia } from '../../utils/get-user-media';
-import { getBpm, newSession } from '../../../api/api';
+import { getBpm, newSession, stopSession } from '../../../api/api';
 
 type CameraInteractionLayoutAttrs = DetailedHTMLProps<
   HTMLAttributes<HTMLDivElement>,
@@ -35,17 +35,36 @@ export const CameraInteractionLayout: FC<
   const [isVideoButtonVisible, setVideoButtonVisibility] = useState(true);
   const [bpmValue, setBmpValue] = useState(0);
   const [sessionId, setSessionId] = useState<number>(-1);
+  const [bpmTimerId, setBmpTimerId] = useState<NodeJS.Timer>();
+  const [isUploadEnabled, setIsUploadEnabled] = useState<boolean>(false);
 
-  useEffect(() => {
-    if (sessionId === -1) {
-      const createSession = async () => {
-        const id = await newSession();
-        console.log(id);
-        setSessionId(id);
-      };
-      createSession();
+  const createSession = async () => {
+    const id = await newSession();
+    console.log(id);
+    return id;
+  };
+
+  const stopCurrentSession = async () => {
+    if (sessionId !== -1) {
+      await stopSession(sessionId);
+      setSessionId(-1);
     }
-  }, []);
+  };
+
+  const setBpmUpdate = (id: number) => {
+    const timerId = setInterval(async () => {
+      const bpm = await getBpm(id);
+      setBmpValue(bpm);
+    }, BPM_REFRESH_DELAY);
+
+    setBmpTimerId(timerId);
+  };
+
+  const stopBpmUpdate = () => {
+    if (bpmTimerId) {
+      clearInterval(bpmTimerId);
+    }
+  };
 
   const className = `${attrs.className || ''} ${
     styles.cameraInteractionLayout
@@ -70,13 +89,22 @@ export const CameraInteractionLayout: FC<
     }
 
     mediaDeviceStream.current = mediaStream;
+
+    const id = await createSession();
+    setSessionId(id);
+    setBpmUpdate(id);
+
+    setIsUploadEnabled(true);
     console.log(mediaStream);
 
-    await setButtonDisableState(false);
+    setButtonDisableState(false);
   };
 
   const onStop: MouseEventHandler<HTMLButtonElement> = () => {
     setButtonDisableState(true);
+    setIsUploadEnabled(false);
+    stopBpmUpdate();
+    stopCurrentSession();
 
     if (mediaDeviceStream.current !== undefined) {
       mediaDeviceStream.current.getTracks().forEach((mediaTrack) => {
@@ -90,21 +118,13 @@ export const CameraInteractionLayout: FC<
     }, 2500);
   };
 
-  useEffect(() => {
-    if (sessionId !== -1) {
-      setInterval(async () => {
-        const bpm = await getBpm(sessionId);
-        setBmpValue(bpm);
-      }, BPM_REFRESH_DELAY);
-    }
-  }, [sessionId]);
-
   return (
     <div {...attrs} className={className}>
       <div className={styles.interactionSection}>
         <VideoPreview
           srcObject={mediaDeviceStream.current}
           sessionId={sessionId}
+          frameUploadEnabled={isUploadEnabled}
         />
 
         <div className={styles.interactionSection__bpm}>{bpmValue}</div>
