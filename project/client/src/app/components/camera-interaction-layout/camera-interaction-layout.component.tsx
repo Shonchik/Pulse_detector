@@ -33,7 +33,7 @@ export const CameraInteractionLayout: FC<
   const mediaDeviceStream = useRef<MediaStream>();
   const [isButtonDisabled, setButtonDisableState] = useState(false);
   const [isVideoButtonVisible, setVideoButtonVisibility] = useState(true);
-  const [bpmValue, setBmpValue] = useState(0);
+  const [bpmValue, setBmpValue] = useState<string>('');
   const [sessionId, setSessionId] = useState<number>(-1);
   const [bpmTimerId, setBmpTimerId] = useState<NodeJS.Timer>();
   const [isUploadEnabled, setIsUploadEnabled] = useState<boolean>(false);
@@ -64,6 +64,7 @@ export const CameraInteractionLayout: FC<
     if (bpmTimerId) {
       clearInterval(bpmTimerId);
     }
+    setBmpValue('');
   };
 
   const className = `${attrs.className || ''} ${
