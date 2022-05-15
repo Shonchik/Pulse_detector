@@ -107,7 +107,7 @@ export const CameraInteractionLayout: FC<
           sessionId={sessionId}
         />
 
-        <div className={styles.interactionSection__bpm}>{bpmValue} bpm</div>
+        <div className={styles.interactionSection__bpm}>{bpmValue}</div>
 
         <div>
           {isVideoButtonVisible === true ? (
