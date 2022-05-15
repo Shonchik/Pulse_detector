@@ -46,7 +46,7 @@ class getPulseApp():
             return
 
     def get_bpm(self):
-        return str(self.processor.bpm)
+        return str(self.processor.text_output)
 
 class Session(Resource):
     def get(self):
@@ -71,12 +71,19 @@ class BPM(Resource):
         if id == -1:
             return "Not found", 404
         app = sessions[id]
-        # print(app.get_bpm())
         return app.get_bpm(), 200
+
+class CloseSession(Resource):
+    def get(self, id=-1):
+        if id == -1:
+            return "Not found", 404
+        sessions[id] = ""
+        return "Close session: " + str(id), 200
 
 api.add_resource(Session, "/new_session")
 api.add_resource(NewData, "/new_data/<int:id>")
 api.add_resource(BPM, "/get_bpm/<int:id>")
+api.add_resource(CloseSession, "/close_session/<int:id>")
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True)
